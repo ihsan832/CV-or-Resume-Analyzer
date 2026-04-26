@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI CV Analyzer</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <!-- Dark mode toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+    <span class="theme-icon">🌙</span>
+  </button>
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <div class="logo-mark">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect x="2" y="2" width="10" height="10" rx="2" fill="currentColor" opacity="0.9"/>
+            <rect x="16" y="2" width="10" height="10" rx="2" fill="currentColor" opacity="0.5"/>
+            <rect x="2" y="16" width="10" height="10" rx="2" fill="currentColor" opacity="0.5"/>
+            <rect x="16" y="16" width="10" height="10" rx="2" fill="currentColor" opacity="0.9"/>
+          </svg>
+        </div>
+        <span>CV<strong>Lens</strong></span>
+      </div>
+      <p class="header-tagline">AI-Powered Resume Intelligence</p>
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="main">
+
+    <!-- Upload Section -->
+    <section class="upload-section" id="uploadSection">
+      <div class="upload-hero">
+        <h1 class="hero-title">Decode Your <em>Resume</em></h1>
+        <p class="hero-sub">Upload your CV and get an instant ATS score, skill map, and personalized career insights powered by AI.</p>
+      </div>
+
+      <div class="upload-card" id="dropZone">
+        <div class="upload-card-inner">
+          <div class="upload-icon">
+            <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+              <path d="M24 4L24 32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M14 14L24 4L34 14" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M8 32V40C8 42.2 9.8 44 12 44H36C38.2 44 40 42.2 40 40V32" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <h2 class="upload-title">Drop your CV here</h2>
+          <p class="upload-hint">Supports <strong>PDF</strong> and <strong>DOCX</strong> — max 10MB</p>
+          <div class="upload-divider"><span>or</span></div>
+          <label class="btn-upload" for="fileInput">Browse Files</label>
+          <input type="file" id="fileInput" accept=".pdf,.docx" hidden />
+        </div>
+        <div class="upload-overlay">
+          <p>Release to upload</p>
+        </div>
+      </div>
+
+      <div class="file-preview" id="filePreview" hidden>
+        <div class="file-info">
+          <div class="file-icon" id="fileTypeIcon">📄</div>
+          <div class="file-details">
+            <span class="file-name" id="fileName">—</span>
+            <span class="file-size" id="fileSize">—</span>
+          </div>
+          <button class="file-remove" id="removeFile" aria-label="Remove file">✕</button>
+        </div>
+        <button class="btn-analyze" id="analyzeBtn">
+          <span>Analyze CV</span>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M3 9H15M15 9L10 4M15 9L10 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="error-msg" id="errorMsg" hidden></div>
+    </section>
+
+    <!-- Loading -->
+    <section class="loading-section" id="loadingSection" hidden>
+      <div class="loader-card">
+        <div class="loader-animation">
+          <div class="pulse-ring"></div>
+          <div class="pulse-ring delay-1"></div>
+          <div class="pulse-ring delay-2"></div>
+          <div class="loader-center">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <circle cx="16" cy="16" r="12" stroke="currentColor" stroke-width="2" stroke-dasharray="4 4"/>
+              <path d="M16 10V16L20 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </div>
+        </div>
+        <h2 class="loader-title">Analyzing your CV</h2>
+        <div class="loader-steps">
+          <div class="loader-step active" id="step1">
+            <div class="step-dot"></div>
+            <span>Extracting text</span>
+          </div>
+          <div class="loader-step" id="step2">
+            <div class="step-dot"></div>
+            <span>Running AI analysis</span>
+          </div>
+          <div class="loader-step" id="step3">
+            <div class="step-dot"></div>
+            <span>Generating insights</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section class="results-section" id="resultsSection" hidden>
+      <div class="results-header">
+        <div>
+          <h2 class="results-title">Analysis Complete</h2>
+          <p class="results-sub" id="resultsFileName">—</p>
+        </div>
+        <div class="results-actions">
+          <button class="btn-secondary" id="downloadBtn">⬇ Download Report</button>
+          <button class="btn-secondary" id="newAnalysisBtn">↺ New Analysis</button>
+        </div>
+      </div>
+
+      <!-- ATS Score -->
+      <div class="card card-ats">
+        <div class="card-label">ATS Score</div>
+        <div class="ats-layout">
+          <div class="ats-score-wrap">
+            <div class="ats-circle">
+              <svg class="ats-svg" viewBox="0 0 120 120">
+                <circle class="ats-track" cx="60" cy="60" r="50"/>
+                <circle class="ats-fill" id="atsCircle" cx="60" cy="60" r="50"
+                  stroke-dasharray="314" stroke-dashoffset="314"/>
+              </svg>
+              <div class="ats-number">
+                <span id="atsValue">0</span>
+                <small>/100</small>
+              </div>
+            </div>
+            <div class="ats-badge" id="atsBadge">—</div>
+          </div>
+          <div class="ats-bar-section">
+            <div class="ats-bar-label">
+              <span>Resume Strength</span>
+              <span id="atsBarPct">0%</span>
+            </div>
+            <div class="ats-bar-track">
+              <div class="ats-bar-fill" id="atsBarFill"></div>
+            </div>
+            <p class="ats-tip" id="atsTip">—</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Skills -->
+      <div class="card">
+        <div class="card-label">Extracted Skills</div>
+        <div class="tags-wrap" id="skillsTags"></div>
+      </div>
+
+      <!-- Strengths & Weaknesses -->
+      <div class="card-row">
+        <div class="card card-strengths">
+          <div class="card-label card-label-green">✓ Strengths</div>
+          <ul class="insight-list" id="strengthsList"></ul>
+        </div>
+        <div class="card card-weaknesses">
+          <div class="card-label card-label-red">✗ Weaknesses</div>
+          <ul class="insight-list" id="weaknessesList"></ul>
+        </div>
+      </div>
+
+      <!-- Suggestions -->
+      <div class="card">
+        <div class="card-label">Improvement Suggestions</div>
+        <ol class="suggestion-list" id="suggestionsList"></ol>
+      </div>
+
+      <!-- Job Matches -->
+      <div class="card">
+        <div class="card-label">Job Role Matches</div>
+        <div class="jobs-grid" id="jobsGrid"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>Built with LangChain · LangGraph · FastAPI · ❤</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
